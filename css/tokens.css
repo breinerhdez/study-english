@@ -1,0 +1,91 @@
+/* ==========================================================================
+   Tokens de diseño: color, espacio, tipografía. Todo escala con rem, y el
+   rem escala con el ancho de pantalla (móvil → TV 4K).
+   ========================================================================== */
+:root {
+  --fs: 1; /* multiplicador de tamaño elegido por el usuario */
+  --rail-w: 0px;
+  --panel-w: 0px;
+  --nav-h: 4.25rem;
+
+  --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-ipa: "Charis SIL", "Doulos SIL", "Noto Sans", "Segoe UI", "DejaVu Sans", "Lucida Sans Unicode", system-ui, sans-serif;
+
+  --r-sm: .5rem;
+  --r-md: .875rem;
+  --r-lg: 1.25rem;
+  --gap: clamp(.75rem, 1.2vw, 1.5rem);
+  --pad: clamp(1rem, 3vw, 3.5rem);
+  --tap: 3rem; /* alto mínimo de elementos tocables */
+
+  --ease: cubic-bezier(.2, .7, .2, 1);
+
+  color-scheme: light;
+  --bg: #f6f7fb;
+  --surface: #ffffff;
+  --surface-2: #eef0f7;
+  --surface-3: #e3e6f1;
+  --line: #d9dcea;
+  --text: #171a2b;
+  --text-2: #4a5070;
+  --text-3: #727896;
+  --accent: #4338ca;
+  --accent-2: #6366f1;
+  --accent-soft: #e6e7fb;
+  --on-accent: #ffffff;
+  --ipa: #0b6b8a;
+  --ok: #0f7a4d;
+  --ok-soft: #dcf5e8;
+  --bad: #b3261e;
+  --bad-soft: #fde4e1;
+  --warn: #8a5a00;
+  --warn-soft: #fff1cf;
+  --saved: #fde68a;
+  --saved-line: #d49b00;
+  --shadow: 0 1px 2px rgba(23, 26, 43, .06), 0 6px 20px rgba(23, 26, 43, .07);
+  --shadow-lg: 0 10px 40px rgba(23, 26, 43, .22);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0f1120; --surface: #181b30; --surface-2: #20243d; --surface-3: #2a2f4d;
+    --line: #333858; --text: #eceefb; --text-2: #b6bbd9; --text-3: #8b91b4;
+    --accent: #a5a8ff; --accent-2: #8b8ff5; --accent-soft: #272b57; --on-accent: #12142b;
+    --ipa: #6fd3f0; --ok: #5fdc9f; --ok-soft: #123a2a; --bad: #ff8a80; --bad-soft: #451a17;
+    --warn: #ffd37a; --warn-soft: #3d2f0c; --saved: #5b4a0b; --saved-line: #e0ad22;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 20px rgba(0,0,0,.35);
+    --shadow-lg: 0 10px 40px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f1120; --surface: #181b30; --surface-2: #20243d; --surface-3: #2a2f4d;
+  --line: #333858; --text: #eceefb; --text-2: #b6bbd9; --text-3: #8b91b4;
+  --accent: #a5a8ff; --accent-2: #8b8ff5; --accent-soft: #272b57; --on-accent: #12142b;
+  --ipa: #6fd3f0; --ok: #5fdc9f; --ok-soft: #123a2a; --bad: #ff8a80; --bad-soft: #451a17;
+  --warn: #ffd37a; --warn-soft: #3d2f0c; --saved: #5b4a0b; --saved-line: #e0ad22;
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 20px rgba(0,0,0,.35);
+  --shadow-lg: 0 10px 40px rgba(0,0,0,.6);
+}
+
+/* Escala fluida: 14px en móvil, ~16px en 1080p, ~25px en 4K. */
+html { font-size: calc(clamp(14px, 7.5px + .45vw, 34px) * var(--fs)); }
+
+/* Barra de navegación: inferior en móvil, riel lateral en pantallas anchas con mouse o en tablets/TV grandes */
+/* data-layout lo decide index.html según ancho Y tipo de puntero (un teléfono nunca es “pantalla grande”) */
+:root[data-layout="rail"] { --rail-w: 5.25rem; --nav-h: 0px; }
+@media (min-width: 1180px) {
+  :root[data-layout="rail"] { --rail-w: 13.5rem; }
+}
+/* Panel de palabra acoplado a la derecha en pantallas anchas */
+@media (min-width: 1500px) {
+  :root { --panel-w: clamp(20rem, 24vw, 34rem); }
+}
+@media (pointer: coarse) {
+  :root { --tap: 3.25rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  :root { --ease: linear; }
+  * { animation-duration: .001ms !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+}

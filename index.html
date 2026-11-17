@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f6f7fb">
+<meta name="description" content="Plataforma para estudiar inglés de forma autónoma: IPA, lector con audio, vocabulario y ejercicios. Funciona sin internet.">
+<title>English Studio</title>
+<script>
+/* Layout: "rail" (menú lateral) solo en pantallas anchas con mouse, o ≥1024px y alto suficiente (tablet/TV).
+   Un teléfono, incluso girado o con "sitio de escritorio", usa siempre la barra inferior. */
+(function () {
+  var q = matchMedia("(min-width: 760px) and (pointer: fine), (min-width: 1024px) and (min-height: 521px)");
+  function set() { var phone = Math.min(screen.width, screen.height) < 600; document.documentElement.setAttribute("data-layout", q.matches && !phone ? "rail" : "bar"); }
+  set(); (q.addEventListener ? q.addEventListener("change", set) : q.addListener(set));
+})();
+</script>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/exercises.css">
+</head>
+<body>
+<a class="sr-only" href="#main">Saltar al contenido</a>
+<nav id="nav" aria-label="Principal"></nav>
+<div id="app"><main id="main" tabindex="-1"></main></div>
+<div id="player" role="region" aria-label="Reproductor"></div>
+<aside id="wordpanel" aria-label="Palabra seleccionada" aria-live="polite"></aside>
+<div id="toasts" aria-live="polite"></div>
+<noscript><p style="padding:2rem">Necesitas activar JavaScript para usar English Studio.</p></noscript>
+
+<script src="data/dictionary.js"></script>
+<script src="data/ipa.js"></script>
+<script src="js/util.js"></script>
+<script src="js/store.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/dict.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/router.js"></script>
+<script src="js/topics.js"></script>
+<script src="js/wordpanel.js"></script>
+<script src="js/blocks.js"></script>
+<script src="js/exercises.js"></script>
+<script src="js/views/main.js"></script>
+<script src="js/views/topic.js"></script>
+<script src="js/views/vocab.js"></script>
+<script src="js/views/ipa.js"></script>
+<script src="js/views/reader.js"></script>
+<script src="js/views/settings.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
