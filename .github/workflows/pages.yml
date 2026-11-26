@@ -1,0 +1,90 @@
+name: Validar, versionar y publicar
+
+# Cada push a main: valida el contenido, publica en GitHub Pages y crea un tag de versión.
+# Tipo de versión según el mensaje del último commit:
+#   [major] -> v2.0.0     [minor] -> v1.1.0     (sin marca) -> v1.0.1
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write   # crear tags y releases
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.ver.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Calcular versión
+        id: ver
+        run: |
+          last=$(git tag -l 'v[0-9]*' --sort=-v:refname | head -1)
+          msg=$(git log -1 --format=%B)
+          if [ -z "$last" ]; then
+            next="v1.0.0"
+          else
+            IFS=. read -r ma mi pa <<< "${last#v}"
+            if   echo "$msg" | grep -qi '\[major\]'; then ma=$((ma+1)); mi=0; pa=0
+            elif echo "$msg" | grep -qi '\[minor\]'; then mi=$((mi+1)); pa=0
+            else pa=$((pa+1)); fi
+            next="v$ma.$mi.$pa"
+          fi
+          echo "version=$next" >> "$GITHUB_OUTPUT"
+          echo "Versión: $next (anterior: ${last:-ninguna})"
+
+      - name: Regenerar manifiestos (service worker y temas)
+        run: node tools/sync.js
+
+      - name: Validar contenido
+        run: node tools/validate.js
+
+      - name: Armar sitio
+        run: |
+          mkdir _site
+          cp -r index.html manifest.webmanifest sw.js sw-manifest.js css js data content icons _site/
+          printf '{"version":"%s","commit":"%s","date":"%s"}\n' \
+            "${{ steps.ver.outputs.version }}" "$GITHUB_SHA" "$(date -u +%FT%TZ)" > _site/version.json
+          touch _site/.nojekyll
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.dep.outputs.page_url }}
+    steps:
+      - id: dep
+        uses: actions/deploy-pages@v4
+
+  tag:
+    needs: [build, deploy]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Crear tag y release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          V: ${{ needs.build.outputs.version }}
+        run: |
+          gh release create "$V" --target "$GITHUB_SHA" --title "$V" --generate-notes

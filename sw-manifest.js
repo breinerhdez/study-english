@@ -1,10 +1,11 @@
 /* GENERADO por tools/sync.js — no editar a mano */
-self.SW_VERSION = "7f6370c242";
+self.SW_VERSION = "66bce29137";
 self.SW_FILES = [
   "./",
   "content/manifest.js",
   "content/topics/01-to-be-present.js",
   "content/topics/02-verb-help.js",
+  "content/topics/03-when-to-use-the.js",
   "css/base.css",
   "css/components.css",
   "css/exercises.css",
